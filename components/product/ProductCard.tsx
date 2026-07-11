@@ -5,6 +5,8 @@ import Link from "next/link";
 
 import { Product } from "@/data/types";
 
+import { useCart } from "@/context/CartContext";
+
 import Price from "./Price";
 import Rating from "./Rating";
 import FavoriteButton from "./FavoriteButton";
@@ -16,6 +18,13 @@ interface Props {
 export default function ProductCard({
   product,
 }: Props) {
+
+  const { addToCart } = useCart();
+
+  function handleAddToCart() {
+    addToCart(product, 1);
+  }
+
   return (
     <div className="bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 hover:border-yellow-400 transition-all duration-300 hover:-translate-y-2">
 
@@ -69,7 +78,10 @@ export default function ProductCard({
           reviews={product.reviews}
         />
 
-        <button className="mt-6 w-full bg-yellow-400 text-black font-bold py-3 rounded-xl hover:bg-yellow-300 transition">
+        <button
+          onClick={handleAddToCart}
+          className="mt-6 w-full bg-yellow-400 text-black font-bold py-3 rounded-xl hover:bg-yellow-300 transition"
+        >
           Agregar al carrito
         </button>
 
