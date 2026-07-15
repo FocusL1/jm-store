@@ -1,106 +1,261 @@
-# 🗄️ DATABASE
+# 🗄️ JM-STORE DATABASE
 
-## Estado
+**Versión:** v0.3.0-alpha
 
-🚧 En desarrollo
+---
+
+# Estado
+
+🟢 Arquitectura del catálogo consolidada
 
 ---
 
 # Objetivo
 
-Este documento describe toda la arquitectura de la base de datos de JM-STORE.
+Este documento describe la arquitectura oficial de la base de datos de JM-STORE.
 
-Aquí se documentarán todas las tablas, relaciones, índices, funciones, triggers, políticas de seguridad (RLS) y procesos utilizados durante el desarrollo del proyecto.
-
-Este documento será la referencia oficial para cualquier modificación de la base de datos.
+Toda modificación estructural deberá documentarse aquí antes de implementarse en producción.
 
 ---
 
 # Tecnologías
 
-- Supabase
 - PostgreSQL
+- Supabase
 - Row Level Security (RLS)
-- Storage
+- Supabase Storage
 - Authentication
 
 ---
 
 # Arquitectura
 
-Pendiente de documentación.
+La base de datos está organizada por módulos independientes para facilitar el crecimiento del proyecto.
+
+- Catálogo
+- Inventario
+- Ventas
+- Usuarios
+- Pagos
+- Marketing
+- Configuración
 
 ---
 
-# Modelo Entidad-Relación (ERD)
+# Módulos
 
-Pendiente de documentación.
+## Catálogo
 
----
-
-# Tablas
-
-Se documentarán todas las tablas del sistema.
-
-Ejemplo:
-
-- products
-- categories
 - brands
-- users
-- profiles
-- orders
-- order_items
-- addresses
-- carts
-- favorites
+- categories
+- currencies
+- products
+- product_images
+
+## Inventario
+
+- inventory *(próximamente)*
+
+## Ventas
+
+- orders *(próximamente)*
+- order_items *(próximamente)*
+
+## Clientes
+
+- profiles *(próximamente)*
+- addresses *(próximamente)*
+
+## Marketing
+
+- reviews *(próximamente)*
+- coupons *(próximamente)*
 
 ---
 
 # Relaciones
 
-Pendiente.
+```
+brands
+    │
+    └──────────────┐
+                   │
+                   ▼
+              products
+                   ▲
+                   │
+    ┌──────────────┘
+    │
+categories
+
+currencies
+      │
+      ▼
+products
+
+products
+      │
+      ▼
+product_images
+```
+
+---
+
+# Relaciones SQL
+
+products.brand_id
+
+→ brands.id
+
+products.category_id
+
+→ categories.id
+
+---
+
+# Tablas actuales
+
+| Tabla | Estado |
+|--------|--------|
+| brands | ✅ |
+| categories | ✅ |
+| currencies | ✅ |
+| products | ✅ |
+| product_images | ✅ |
 
 ---
 
 # Índices
 
-Pendiente.
+Actualmente existen índices para:
+
+- products.brand_id
+- products.category_id
+
+Próximamente:
+
+- slug
+- featured
+- active
+- created_at
 
 ---
 
-# Triggers
+# Storage
 
-Pendiente.
+Buckets definidos:
 
----
-
-# Funciones SQL
-
-Pendiente.
-
----
-
-# Policies (RLS)
-
-Pendiente.
+- products
+- brands
+- categories
+- avatars
+- documents
 
 ---
 
-# Buckets de Storage
+# Seguridad
 
-Pendiente.
+RLS habilitado para:
+
+- brands
+- categories
+- currencies
+- products
+- product_images
+
+---
+
+# Scripts SQL
+
+| Archivo | Estado |
+|----------|--------|
+|001_schema.sql|✅|
+|002_seed.sql|✅|
+|003_storage.sql|✅|
+|004_policies.sql|✅|
+|005_schema_v2.sql|✅|
+|006_seed_v2.sql|✅|
+|007_catalog_schema.sql|🚧|
+|008_catalog_seed.sql|🚧|
+|009_products_relations.sql|🚧|
+|010_products_update.sql|🚧|
+
+---
+
+# Próximas tablas
+
+- product_attributes
+- product_attribute_values
+- product_variants
+- inventory
+- exchange_rates
+- reviews
+- coupons
+- wishlists
+- notifications
+
+---
+
+# Convenciones
+
+- Todas las claves primarias usan UUID.
+- Todos los registros tendrán `created_at`.
+- Siempre que sea posible existirá `updated_at`.
+- Los slugs serán únicos y en minúsculas.
+- Las relaciones se realizarán mediante claves foráneas.
+
+---
+
+# Roadmap Base de Datos
+
+Sprint 1
+
+- Base inicial
+
+Sprint 2
+
+- Productos
+
+Sprint 3
+
+- Catálogo
+
+Sprint 4
+
+- Relaciones
+
+Sprint 5
+
+- Inventario
+
+Sprint 6
+
+- Pedidos
+
+Sprint 7
+
+- Usuarios
+
+Sprint 8
+
+- Pagos
+
+Sprint 9
+
+- Marketing
 
 ---
 
 # Versionado
 
-| Fecha | Versión | Cambios |
-|--------|----------|----------|
-| Sprint 1 | v0.1.0-alpha | Documento creado |
+| Versión | Cambios |
+|----------|----------|
+|v0.1.0|Fundación|
+|v0.2.0|Catálogo inicial|
+|v0.3.0|Relaciones Brands y Categories|
 
 ---
 
 # Notas
 
-Este documento se actualizará conforme avance el desarrollo de la base de datos.
+Este documento es la referencia oficial de la arquitectura de la base de datos de JM-STORE.

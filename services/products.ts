@@ -1,23 +1,25 @@
 import { supabase } from "@/lib/supabase";
+import type { Product } from "@/types/product";
 
-export async function getProducts() {
+export async function getProducts(): Promise<Product[]> {
 
   const { data, error } = await supabase
     .from("products")
-    .select("*");
-
-  console.log("=================================");
-  console.log("DATA:");
-  console.log(data);
-
-  console.log("ERROR:");
-  console.log(error);
-
-  console.log("=================================");
+    .select("*")
+    .order("created_at", {
+      ascending: false,
+    });
 
   if (error) {
+
+    console.error(
+      "Error obteniendo productos:",
+      error.message
+    );
+
     return [];
+
   }
 
-  return data ?? [];
+  return data as Product[];
 }

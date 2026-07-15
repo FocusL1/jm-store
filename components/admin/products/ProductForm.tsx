@@ -2,44 +2,69 @@
 
 import { useState } from "react";
 
+const brands = [
+  "Sony",
+  "Microsoft",
+  "Nintendo",
+  "Apple",
+  "Samsung",
+  "JBL",
+  "Logitech",
+  "Asus",
+  "HP",
+  "Lenovo",
+];
+
+const categories = [
+  "Gaming",
+  "Computadores",
+  "Celulares",
+  "Audio",
+  "Monitores",
+  "Periféricos",
+  "Smart Home",
+  "Hogar",
+];
+
 export default function ProductForm() {
-  const [formData, setFormData] = useState({
-    name: "",
-    slug: "",
-    description: "",
-    brand: "",
-    category: "",
-    price: "",
-    old_price: "",
-    stock: "",
-    image: "",
-    featured: false,
-    active: true,
-  });
+  const [name, setName] = useState("");
+  const [slug, setSlug] = useState("");
+  const [description, setDescription] = useState("");
 
-  function handleChange(
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) {
-    const target = e.target;
+  const [brand, setBrand] = useState("");
+  const [category, setCategory] = useState("");
 
-    const value =
-      target instanceof HTMLInputElement &&
-      target.type === "checkbox"
-        ? target.checked
-        : target.value;
+  const [price, setPrice] = useState("");
+  const [oldPrice, setOldPrice] = useState("");
+  const [stock, setStock] = useState("");
 
-    setFormData((prev) => ({
-      ...prev,
-      [target.name]: value,
-    }));
-  }
+  const [image, setImage] = useState<File | null>(null);
 
-  function handleSubmit(e: React.FormEvent) {
+  const [featured, setFeatured] = useState(false);
+  const [flash, setFlash] = useState(false);
+  const [bestSeller, setBestSeller] = useState(false);
+  const [isNew, setIsNew] = useState(false);
+  const [active, setActive] = useState(true);
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    console.log(formData);
+    console.log({
+      name,
+      slug,
+      description,
+      brand,
+      category,
+      price,
+      oldPrice,
+      stock,
+      image,
+      featured,
+      flash,
+      bestSeller,
+      isNew,
+      active,
+    });
   }
 
   return (
@@ -50,192 +75,201 @@ export default function ProductForm() {
       <div className="grid md:grid-cols-2 gap-6">
 
         <div>
-          <label className="block mb-2 text-white">
+          <label className="block mb-2 text-gray-300">
             Nombre
           </label>
 
           <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-3 text-white"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
           />
         </div>
 
         <div>
-          <label className="block mb-2 text-white">
+          <label className="block mb-2 text-gray-300">
             Slug
           </label>
 
           <input
-            type="text"
-            name="slug"
-            value={formData.slug}
-            onChange={handleChange}
-            className="w-full rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-3 text-white"
+            value={slug}
+            onChange={(e) => setSlug(e.target.value)}
+            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
           />
         </div>
 
-      </div>
+        <div className="md:col-span-2">
+          <label className="block mb-2 text-gray-300">
+            Descripción
+          </label>
 
-      <div>
-
-        <label className="block mb-2 text-white">
-          Descripción
-        </label>
-
-        <textarea
-          rows={5}
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          className="w-full rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-3 text-white"
-        />
-
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-6">
+          <textarea
+            rows={4}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
+          />
+        </div>
 
         <div>
-
-          <label className="block mb-2 text-white">
+          <label className="block mb-2 text-gray-300">
             Marca
           </label>
 
-          <input
-            type="text"
-            name="brand"
-            value={formData.brand}
-            onChange={handleChange}
-            className="w-full rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-3 text-white"
-          />
+          <select
+            value={brand}
+            onChange={(e) => setBrand(e.target.value)}
+            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
+          >
+            <option value="">Seleccione una marca</option>
 
+            {brands.map((brand) => (
+              <option
+                key={brand}
+                value={brand}
+              >
+                {brand}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>
-
-          <label className="block mb-2 text-white">
+          <label className="block mb-2 text-gray-300">
             Categoría
           </label>
 
-          <input
-            type="text"
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            className="w-full rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-3 text-white"
-          />
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
+          >
+            <option value="">Seleccione una categoría</option>
 
+            {categories.map((category) => (
+              <option
+                key={category}
+                value={category}
+              >
+                {category}
+              </option>
+            ))}
+          </select>
         </div>
 
-      </div>
-
-      <div className="grid md:grid-cols-3 gap-6">
-
         <div>
-
-          <label className="block mb-2 text-white">
+          <label className="block mb-2 text-gray-300">
             Precio
           </label>
 
           <input
             type="number"
-            name="price"
-            value={formData.price}
-            onChange={handleChange}
-            className="w-full rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-3 text-white"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
           />
-
         </div>
 
         <div>
-
-          <label className="block mb-2 text-white">
+          <label className="block mb-2 text-gray-300">
             Precio anterior
           </label>
 
           <input
             type="number"
-            name="old_price"
-            value={formData.old_price}
-            onChange={handleChange}
-            className="w-full rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-3 text-white"
+            value={oldPrice}
+            onChange={(e) => setOldPrice(e.target.value)}
+            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
           />
-
         </div>
 
         <div>
-
-          <label className="block mb-2 text-white">
+          <label className="block mb-2 text-gray-300">
             Stock
           </label>
 
           <input
             type="number"
-            name="stock"
-            value={formData.stock}
-            onChange={handleChange}
-            className="w-full rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-3 text-white"
+            value={stock}
+            onChange={(e) => setStock(e.target.value)}
+            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
           />
+        </div>
 
+        <div>
+          <label className="block mb-2 text-gray-300">
+            Imagen
+          </label>
+
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              if (e.target.files?.length) {
+                setImage(e.target.files[0]);
+              }
+            }}
+            className="block w-full text-gray-300 file:mr-4 file:rounded-lg file:border-0 file:bg-yellow-400 file:px-4 file:py-2 file:font-bold file:text-black hover:file:bg-yellow-300"
+          />
         </div>
 
       </div>
 
-      <div>
+      <div className="grid md:grid-cols-5 gap-4">
 
-        <label className="block mb-2 text-white">
-          Imagen
-        </label>
-
-        <input
-          type="text"
-          name="image"
-          value={formData.image}
-          onChange={handleChange}
-          className="w-full rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-3 text-white"
-        />
-
-      </div>
-
-      <div className="flex gap-10">
-
-        <label className="flex items-center gap-3 text-white">
-
+        <label className="flex items-center gap-2 text-white">
           <input
             type="checkbox"
-            name="featured"
-            checked={formData.featured}
-            onChange={handleChange}
+            checked={featured}
+            onChange={(e) => setFeatured(e.target.checked)}
           />
-
-          Producto destacado
-
+          Destacado
         </label>
 
-        <label className="flex items-center gap-3 text-white">
-
+        <label className="flex items-center gap-2 text-white">
           <input
             type="checkbox"
-            name="active"
-            checked={formData.active}
-            onChange={handleChange}
+            checked={flash}
+            onChange={(e) => setFlash(e.target.checked)}
           />
+          Flash
+        </label>
 
+        <label className="flex items-center gap-2 text-white">
+          <input
+            type="checkbox"
+            checked={bestSeller}
+            onChange={(e) => setBestSeller(e.target.checked)}
+          />
+          Best Seller
+        </label>
+
+        <label className="flex items-center gap-2 text-white">
+          <input
+            type="checkbox"
+            checked={isNew}
+            onChange={(e) => setIsNew(e.target.checked)}
+          />
+          Nuevo
+        </label>
+
+        <label className="flex items-center gap-2 text-white">
+          <input
+            type="checkbox"
+            checked={active}
+            onChange={(e) => setActive(e.target.checked)}
+          />
           Activo
-
         </label>
 
       </div>
 
       <button
         type="submit"
-        className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-8 py-3 rounded-lg"
+        className="rounded-xl bg-yellow-400 px-8 py-3 font-bold text-black transition hover:bg-yellow-300"
       >
         Guardar producto
       </button>
-
     </form>
   );
 }

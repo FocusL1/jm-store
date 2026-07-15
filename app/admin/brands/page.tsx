@@ -1,7 +1,14 @@
+import BrandToolbar from "../../../components/admin/brands/BrandToolbar";
+import BrandsTable from "../../../components/admin/brands/BrandsTable";
+
 export default function BrandsPage() {
   return (
-    <div>
-      <h1>Marcas</h1>
+    <div className="space-y-8">
+
+      <BrandToolbar />
+
+      <BrandsTable />
+
     </div>
   );
 }

@@ -13,11 +13,11 @@ export interface Product {
 
   image: string;
 
-  gallery?: string[];
+  images: string[] | null;
 
   price: number;
 
-  oldPrice: number;
+  old_price: number | null;
 
   discount: number;
 
@@ -29,13 +29,27 @@ export interface Product {
 
   featured: boolean;
 
+  featured_order: number;
+
   flash: boolean;
 
-  bestSeller: boolean;
+  flash_order: number;
 
-  isNew: boolean;
+  best_seller: boolean;
+
+  is_new: boolean;
 
   active: boolean;
+
+  free_shipping: boolean;
+
+  sold: number;
+
+  views: number;
+
+  created_at: string;
+
+  updated_at: string;
 }
 
 export interface ProductFormData {
@@ -53,7 +67,7 @@ export interface ProductFormData {
 
   price: number;
 
-  old_price: number;
+  old_price: number | null;
 
   stock: number;
 

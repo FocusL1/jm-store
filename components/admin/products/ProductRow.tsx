@@ -1,7 +1,8 @@
 import Image from "next/image";
+import type { Product } from "@/types/product";
 
 interface ProductRowProps {
-  product: any;
+  product: Product;
 }
 
 export default function ProductRow({
@@ -12,7 +13,7 @@ export default function ProductRow({
 
       <td className="p-4">
 
-        <div className="relative w-16 h-16 rounded-lg overflow-hidden">
+        <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-zinc-800">
 
           <Image
             src={product.image}
@@ -26,8 +27,16 @@ export default function ProductRow({
 
       </td>
 
-      <td className="p-4 text-white font-semibold">
-        {product.name}
+      <td className="p-4">
+
+        <div className="font-semibold text-white">
+          {product.name}
+        </div>
+
+        <div className="text-xs text-gray-500 mt-1">
+          {product.slug}
+        </div>
+
       </td>
 
       <td className="p-4 text-gray-300">
@@ -38,12 +47,38 @@ export default function ProductRow({
         {product.brand}
       </td>
 
-      <td className="p-4 text-yellow-400 font-bold">
-        ${product.price}
+      <td className="p-4">
+
+        <div className="font-bold text-yellow-400">
+          ${product.price.toFixed(2)}
+        </div>
+
+        {product.old_price && product.old_price > product.price && (
+
+          <div className="text-xs text-gray-500 line-through">
+
+            ${product.old_price.toFixed(2)}
+
+          </div>
+
+        )}
+
       </td>
 
-      <td className="p-4 text-white">
-        {product.stock}
+      <td className="p-4">
+
+        <span
+          className={
+            product.stock > 10
+              ? "text-green-400 font-semibold"
+              : product.stock > 0
+              ? "text-yellow-400 font-semibold"
+              : "text-red-500 font-semibold"
+          }
+        >
+          {product.stock}
+        </span>
+
       </td>
 
       <td className="p-4">
@@ -64,11 +99,17 @@ export default function ProductRow({
 
         <div className="flex gap-3">
 
-          <button className="text-blue-400 hover:text-blue-300">
+          <button
+            className="text-blue-400 hover:text-blue-300 transition"
+            title="Editar producto"
+          >
             ✏️
           </button>
 
-          <button className="text-red-500 hover:text-red-400">
+          <button
+            className="text-red-500 hover:text-red-400 transition"
+            title="Eliminar producto"
+          >
             🗑️
           </button>
 
