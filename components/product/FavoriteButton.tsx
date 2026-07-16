@@ -1,15 +1,17 @@
 "use client";
 
-import { Product } from "@/data/types";
+import type { Product } from "@/types/product";
+
 import { useFavorites } from "@/context/FavoritesContext";
 
-interface FavoriteButtonProps {
+interface Props {
   product: Product;
 }
 
 export default function FavoriteButton({
   product,
-}: FavoriteButtonProps) {
+}: Props) {
+
   const {
     addFavorite,
     removeFavorite,
@@ -29,8 +31,7 @@ export default function FavoriteButton({
   return (
     <button
       onClick={handleFavorite}
-      aria-label="Favorito"
-      className="text-3xl transition-transform hover:scale-110"
+      className="text-3xl hover:scale-110 transition"
     >
       {favorite ? "❤️" : "🤍"}
     </button>

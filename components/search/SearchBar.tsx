@@ -1,21 +1,30 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { products } from "@/data/products";
+import type { Product } from "@/types/product";
+import { getProducts } from "@/services/products";
 
 import SearchInput from "./SearchInput";
 import SearchResults from "./SearchResults";
 
 export default function SearchBar() {
   const [query, setQuery] = useState("");
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    async function loadProducts() {
+      const data = await getProducts();
+      setProducts(data);
+    }
+
+    loadProducts();
+  }, []);
 
   const filteredProducts = useMemo(() => {
     const search = query.trim().toLowerCase();
 
-    if (search.length === 0) {
-      return [];
-    }
+    if (!search) return [];
 
     return products.filter((product) => {
       return (
@@ -24,11 +33,10 @@ export default function SearchBar() {
         product.category.toLowerCase().includes(search)
       );
     });
-  }, [query]);
+  }, [products, query]);
 
   return (
     <div className="relative w-full max-w-lg">
-
       <SearchInput
         value={query}
         onChange={setQuery}
@@ -41,7 +49,6 @@ export default function SearchBar() {
           />
         </div>
       )}
-
     </div>
   );
 }

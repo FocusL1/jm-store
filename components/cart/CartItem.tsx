@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 
-import { Product } from "@/data/types";
+import type { Product } from "@/types/product";
 
 import { useCart } from "@/context/CartContext";
 
@@ -15,7 +15,6 @@ interface CartItemProps {
 export default function CartItem({
   product,
 }: CartItemProps) {
-
   const {
     removeFromCart,
     increaseQuantity,
@@ -35,20 +34,14 @@ export default function CartItem({
   return (
     <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-6 flex gap-6 items-center">
 
-      {/* Imagen */}
-
       <div className="relative w-32 h-32 bg-black rounded-xl overflow-hidden">
-
         <Image
           src={product.image}
           alt={product.name}
           fill
           className="object-contain p-3"
         />
-
       </div>
-
-      {/* Información */}
 
       <div className="flex-1">
 
@@ -67,8 +60,6 @@ export default function CartItem({
             maximumFractionDigits: 0,
           }).format(product.price)}
         </p>
-
-        {/* Selector de cantidad */}
 
         <div className="flex items-center gap-4 mt-6">
 
@@ -93,8 +84,6 @@ export default function CartItem({
         </div>
 
       </div>
-
-      {/* Botón eliminar */}
 
       <button
         onClick={handleRemove}

@@ -3,12 +3,12 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useState,
   ReactNode,
-  useEffect,
 } from "react";
 
-import { Product } from "@/data/types";
+import type { Product } from "@/types/product";
 
 interface CartItem extends Product {
   quantity: number;
@@ -23,39 +23,51 @@ interface CartContextType {
   ) => void;
 
   removeFromCart: (
-    productId: number
+    productId: string
   ) => void;
 
   increaseQuantity: (
-    productId: number
+    productId: string
   ) => void;
 
   decreaseQuantity: (
-    productId: number
+    productId: string
   ) => void;
 }
 
 const CartContext =
   createContext<CartContextType | null>(null);
 
+interface CartProviderProps {
+  children: ReactNode;
+}
+
 export function CartProvider({
   children,
-}: {
-  children: ReactNode;
-}) {
-
+}: CartProviderProps) {
   const [cart, setCart] = useState<CartItem[]>([]);
 
-  // Cargar carrito desde LocalStorage
   useEffect(() => {
-    const savedCart = localStorage.getItem("jm-store-cart");
+    try {
+      const savedCart = localStorage.getItem(
+        "jm-store-cart"
+      );
 
-    if (savedCart) {
-      setCart(JSON.parse(savedCart));
+      if (savedCart) {
+        setCart(JSON.parse(savedCart));
+      }
+    } catch (error) {
+      console.error(
+        "Error cargando carrito:",
+        error
+      );
+
+      localStorage.removeItem(
+        "jm-store-cart"
+      );
     }
   }, []);
 
-  // Guardar carrito automáticamente
   useEffect(() => {
     localStorage.setItem(
       "jm-store-cart",
@@ -95,7 +107,7 @@ export function CartProvider({
   }
 
   function removeFromCart(
-    productId: number
+    productId: string
   ) {
     setCart((current) =>
       current.filter(
@@ -105,14 +117,15 @@ export function CartProvider({
   }
 
   function increaseQuantity(
-    productId: number
+    productId: string
   ) {
     setCart((current) =>
       current.map((item) =>
         item.id === productId
           ? {
               ...item,
-              quantity: item.quantity + 1,
+              quantity:
+                item.quantity + 1,
             }
           : item
       )
@@ -120,7 +133,7 @@ export function CartProvider({
   }
 
   function decreaseQuantity(
-    productId: number
+    productId: string
   ) {
     setCart((current) =>
       current.map((item) =>
@@ -153,7 +166,8 @@ export function CartProvider({
 }
 
 export function useCart() {
-  const context = useContext(CartContext);
+  const context =
+    useContext(CartContext);
 
   if (!context) {
     throw new Error(

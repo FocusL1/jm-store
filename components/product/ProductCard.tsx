@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { Product } from "@/data/types";
+import type { Product } from "@/types/product";
 
 import { useCart } from "@/context/CartContext";
 
@@ -18,7 +18,6 @@ interface Props {
 export default function ProductCard({
   product,
 }: Props) {
-
   const { addToCart } = useCart();
 
   function handleAddToCart() {
@@ -28,30 +27,22 @@ export default function ProductCard({
   return (
     <div className="bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 hover:border-yellow-400 transition-all duration-300 hover:-translate-y-2">
 
-      {/* Imagen */}
-
       <div className="relative h-64 bg-black">
 
         <Link href={`/products/${product.slug}`}>
-
           <Image
             src={product.image}
             alt={product.name}
             fill
             className="object-cover"
           />
-
         </Link>
-
-        {/* Favorito */}
 
         <div className="absolute top-4 right-4 z-10">
           <FavoriteButton product={product} />
         </div>
 
       </div>
-
-      {/* Información */}
 
       <div className="p-5">
 
@@ -69,7 +60,7 @@ export default function ProductCard({
 
         <Price
           price={product.price}
-          oldPrice={product.oldPrice}
+          oldPrice={product.old_price ?? undefined}
           discount={product.discount}
         />
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { Product } from "@/data/types";
+import type { Product } from "@/types/product";
 
 import { useCart } from "@/context/CartContext";
 
@@ -12,45 +12,42 @@ import QuantitySelector from "./QuantitySelector";
 import ProductActions from "./ProductActions";
 import FavoriteButton from "./FavoriteButton";
 
-interface ProductInfoProps {
+interface Props {
   product: Product;
 }
 
 export default function ProductInfo({
   product,
-}: ProductInfoProps) {
+}: Props) {
+
   const [quantity, setQuantity] = useState(1);
 
   const { addToCart } = useCart();
 
   function increaseQuantity() {
-    setQuantity((prev) => prev + 1);
+    setQuantity((q) => q + 1);
   }
 
   function decreaseQuantity() {
-    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+    setQuantity((q) => Math.max(1, q - 1));
   }
 
   function handleAddToCart() {
     addToCart(product, quantity);
 
     alert(
-      `${quantity} unidad(es) de "${product.name}" agregadas al carrito.`
+      `${quantity} unidad(es) agregadas al carrito`
     );
   }
 
   return (
     <div>
 
-      {/* Marca */}
-
       <p className="text-yellow-400 font-semibold text-lg">
         {product.brand}
       </p>
 
-      {/* Nombre + Favorito */}
-
-      <div className="flex items-start justify-between mt-3">
+      <div className="flex justify-between items-start mt-3">
 
         <h1 className="text-5xl font-bold text-white">
           {product.name}
@@ -60,36 +57,30 @@ export default function ProductInfo({
 
       </div>
 
-      {/* Rating */}
-
       <Rating
         rating={product.rating}
         reviews={product.reviews}
       />
 
-      {/* Precio */}
-
       <Price
         price={product.price}
-        oldPrice={product.oldPrice}
+        oldPrice={product.old_price ?? undefined}
         discount={product.discount}
       />
 
-      {/* Stock */}
-
       <div className="mt-8">
+
         {product.stock > 0 ? (
-          <p className="text-green-400 font-semibold">
-            ✓ Disponible ({product.stock} unidades)
+          <p className="text-green-400">
+            ✓ Disponible ({product.stock})
           </p>
         ) : (
-          <p className="text-red-500 font-semibold">
+          <p className="text-red-500">
             Agotado
           </p>
         )}
-      </div>
 
-      {/* Cantidad */}
+      </div>
 
       <div className="mt-8">
 
@@ -105,8 +96,6 @@ export default function ProductInfo({
 
       </div>
 
-      {/* Descripción */}
-
       <div className="mt-10">
 
         <h2 className="text-white text-xl font-semibold mb-4">
@@ -118,8 +107,6 @@ export default function ProductInfo({
         </p>
 
       </div>
-
-      {/* Botones */}
 
       <ProductActions
         onAddToCart={handleAddToCart}

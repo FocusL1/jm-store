@@ -5,7 +5,10 @@ import ProductGallery from "@/components/product/ProductGallery";
 import ProductInfo from "@/components/product/ProductInfo";
 import RelatedProducts from "@/components/product/RelatedProducts";
 
-import { products } from "@/data/products";
+import {
+  getProductBySlug,
+  getRelatedProducts,
+} from "@/services/products";
 
 interface Props {
   params: Promise<{
@@ -13,29 +16,36 @@ interface Props {
   }>;
 }
 
-export default async function ProductPage({ params }: Props) {
+export default async function ProductPage({
+  params,
+}: Props) {
   const { slug } = await params;
 
-  const product = products.find(
-    (item) => item.slug === slug
-  );
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     notFound();
   }
+
+  const relatedProducts =
+    await getRelatedProducts(
+      product.category,
+      product.id
+    );
 
   return (
     <>
       <Header />
 
       <main className="bg-black min-h-screen py-16">
-
         <div className="max-w-7xl mx-auto px-6">
-
           <div className="grid lg:grid-cols-2 gap-16">
 
             <ProductGallery
-              images={product.gallery ?? [product.image]}
+              images={
+                product.images ??
+                [product.image]
+              }
               productName={product.name}
             />
 
@@ -45,11 +55,10 @@ export default async function ProductPage({ params }: Props) {
 
           <RelatedProducts
             currentProduct={product}
-            products={products}
+            products={relatedProducts}
           />
 
         </div>
-
       </main>
     </>
   );

@@ -1,20 +1,13 @@
-import { getProducts } from "@/services/products";
 import ProductCard from "@/components/product/ProductCard";
+
+import { getProducts } from "@/services/products";
 
 export default async function FeaturedProducts() {
   const products = await getProducts();
 
-  console.log("=================================");
-  console.log("PRODUCTOS DESDE SUPABASE:");
-  console.log(products);
-  console.log("=================================");
-
   const featuredProducts = products
-    .filter((product: any) => product.featured)
+    .filter((product) => product.featured)
     .slice(0, 4);
-
-  console.log("PRODUCTOS DESTACADOS:");
-  console.log(featuredProducts);
 
   return (
     <section className="bg-zinc-950 py-24">
@@ -28,7 +21,7 @@ export default async function FeaturedProducts() {
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {featuredProducts.map((product: any) => (
+          {featuredProducts.map((product) => (
             <ProductCard
               key={product.id}
               product={product}

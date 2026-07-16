@@ -8,33 +8,40 @@ import {
   ReactNode,
 } from "react";
 
-import { Product } from "@/data/types";
+import type { Product } from "@/types/product";
 
 interface FavoritesContextType {
   favorites: Product[];
 
   addFavorite: (product: Product) => void;
 
-  removeFavorite: (id: number) => void;
+  removeFavorite: (id: string) => void;
 
-  isFavorite: (id: number) => boolean;
+  isFavorite: (id: string) => boolean;
 }
 
 const FavoritesContext =
   createContext<FavoritesContextType | null>(null);
 
+interface FavoritesProviderProps {
+  children: ReactNode;
+}
+
 export function FavoritesProvider({
   children,
-}: {
-  children: ReactNode;
-}) {
+}: FavoritesProviderProps) {
   const [favorites, setFavorites] = useState<Product[]>([]);
 
   useEffect(() => {
-    const saved = localStorage.getItem("favorites");
+    try {
+      const saved = localStorage.getItem("favorites");
 
-    if (saved) {
-      setFavorites(JSON.parse(saved));
+      if (saved) {
+        setFavorites(JSON.parse(saved));
+      }
+    } catch (error) {
+      console.error("Error cargando favoritos:", error);
+      localStorage.removeItem("favorites");
     }
   }, []);
 
@@ -59,7 +66,7 @@ export function FavoritesProvider({
     });
   }
 
-  function removeFavorite(id: number) {
+  function removeFavorite(id: string) {
     setFavorites((current) =>
       current.filter(
         (item) => item.id !== id
@@ -67,7 +74,7 @@ export function FavoritesProvider({
     );
   }
 
-  function isFavorite(id: number) {
+  function isFavorite(id: string) {
     return favorites.some(
       (item) => item.id === id
     );
