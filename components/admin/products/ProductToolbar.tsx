@@ -1,55 +1,28 @@
 "use client";
 
-import { useState } from "react";
-
-import Modal from "@/components/ui/Modal";
-import ProductForm from "./ProductForm";
+import Link from "next/link";
 
 export default function ProductToolbar() {
-  const [open, setOpen] = useState(false);
-
   return (
-    <>
-      <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+    <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
 
-        <div>
+      <div>
+        <h1 className="text-4xl font-bold text-yellow-400">
+          Productos
+        </h1>
 
-          <h1 className="text-4xl font-bold text-yellow-400">
-            Productos
-          </h1>
-
-          <p className="text-gray-400 mt-2">
-            Administra todos los productos de JM-STORE.
-          </p>
-
-        </div>
-
-        <button
-          onClick={() => setOpen(true)}
-          className="
-            bg-yellow-400
-            hover:bg-yellow-300
-            text-black
-            font-bold
-            px-6
-            py-3
-            rounded-xl
-            transition
-          "
-        >
-          + Nuevo producto
-        </button>
-
+        <p className="mt-2 text-gray-400">
+          Administra todos los productos de JM-STORE.
+        </p>
       </div>
 
-      <Modal
-        open={open}
-        title="Nuevo producto"
-        onClose={() => setOpen(false)}
+      <Link
+        href="/admin/products/new"
+        className="rounded-xl bg-yellow-400 px-6 py-3 font-bold text-black transition hover:bg-yellow-300"
       >
-        <ProductForm />
-      </Modal>
+        + Nuevo producto
+      </Link>
 
-    </>
+    </div>
   );
 }

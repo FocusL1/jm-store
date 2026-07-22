@@ -23,7 +23,6 @@ export default function Modal({
   footer,
   size = "lg",
 }: ModalProps) {
-
   if (!open) return null;
 
   const sizes = {
@@ -34,60 +33,65 @@ export default function Modal({
   };
 
   return (
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/70 p-6">
 
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+      <div className="flex min-h-full items-center justify-center">
 
-      <div
-        className={`
-          w-full
-          ${sizes[size]}
-          rounded-2xl
-          border
-          border-zinc-700
-          bg-zinc-900
-          shadow-2xl
-        `}
-      >
+        <div
+          className={`
+            w-full
+            ${sizes[size]}
+            max-h-[90vh]
+            overflow-hidden
+            rounded-2xl
+            border
+            border-zinc-700
+            bg-zinc-900
+            shadow-2xl
+            flex
+            flex-col
+          `}
+        >
 
-        <div className="border-b border-zinc-800 px-8 py-6">
+          {/* Encabezado */}
 
-          <h2 className="text-2xl font-bold text-yellow-400">
+          <div className="border-b border-zinc-800 px-8 py-6 flex-shrink-0">
 
-            {title}
+            <h2 className="text-2xl font-bold text-yellow-400">
+              {title}
+            </h2>
 
-          </h2>
+          </div>
 
-        </div>
+          {/* Contenido */}
 
-        <div className="p-8">
+          <div className="flex-1 overflow-y-auto p-8">
 
-          {children}
+            {children}
 
-        </div>
+          </div>
 
-        <div className="flex justify-end gap-4 border-t border-zinc-800 px-8 py-6">
+          {/* Pie */}
 
-          {footer ? (
+          <div className="flex justify-end gap-4 border-t border-zinc-800 px-8 py-6 flex-shrink-0">
 
-            footer
+            {footer ? (
+              footer
+            ) : (
+              <Button
+                variant="secondary"
+                onClick={onClose}
+              >
+                Cerrar
+              </Button>
+            )}
 
-          ) : (
-
-            <Button
-              variant="secondary"
-              onClick={onClose}
-            >
-              Cerrar
-            </Button>
-
-          )}
+          </div>
 
         </div>
 
       </div>
 
     </div>
-
   );
-
 }

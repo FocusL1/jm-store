@@ -1,32 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const brands = [
-  "Sony",
-  "Microsoft",
-  "Nintendo",
-  "Apple",
-  "Samsung",
-  "JBL",
-  "Logitech",
-  "Asus",
-  "HP",
-  "Lenovo",
-];
+import ImageUploader from "./ImageUploader";
 
-const categories = [
-  "Gaming",
-  "Computadores",
-  "Celulares",
-  "Audio",
-  "Monitores",
-  "Periféricos",
-  "Smart Home",
-  "Hogar",
-];
+import { createProduct, updateProduct } from "@/services/products";
+import type { Product } from "@/types/product";
 
-export default function ProductForm() {
+interface ProductFormProps {
+  product?: Product | null;
+  onSuccess?: () => void;
+}
+
+export default function ProductForm({
+  product,
+  onSuccess,
+}: ProductFormProps) {
+  const isEditing = !!product;
+
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
@@ -38,7 +29,7 @@ export default function ProductForm() {
   const [oldPrice, setOldPrice] = useState("");
   const [stock, setStock] = useState("");
 
-  const [image, setImage] = useState<File | null>(null);
+  const [image, setImage] = useState("");
 
   const [featured, setFeatured] = useState(false);
   const [flash, setFlash] = useState(false);
@@ -46,36 +37,167 @@ export default function ProductForm() {
   const [isNew, setIsNew] = useState(false);
   const [active, setActive] = useState(true);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!product) return;
+
+    setName(product.name);
+    setSlug(product.slug);
+    setDescription(product.description ?? "");
+
+    setBrand(product.brand);
+    setCategory(product.category);
+
+    setPrice(product.price.toString());
+
+    setOldPrice(
+      product.old_price
+        ? product.old_price.toString()
+        : ""
+    );
+
+    setStock(product.stock.toString());
+
+    setImage(product.image);
+
+    setFeatured(product.featured);
+    setFlash(product.flash);
+
+    setBestSeller(product.best_seller);
+
+    setIsNew(product.is_new);
+
+    setActive(product.active);
+  }, [product]);
+    async function handleSubmit(
+    e: React.FormEvent<HTMLFormElement>
+  ) {
     e.preventDefault();
 
-    console.log({
-      name,
-      slug,
-      description,
-      brand,
-      category,
-      price,
-      oldPrice,
-      stock,
-      image,
-      featured,
-      flash,
-      bestSeller,
-      isNew,
-      active,
-    });
-  }
+    if (
+      !name ||
+      !slug ||
+      !brand ||
+      !category ||
+      !price ||
+      !stock ||
+      !image
+    ) {
+      alert(
+        "Debes completar todos los campos obligatorios."
+      );
+      return;
+    }
 
-  return (
+    try {
+      setLoading(true);
+
+      const data = {
+        name,
+        slug,
+        description,
+
+        brand,
+        category,
+
+        image,
+        images: [],
+
+        price: Number(price),
+
+        old_price:
+          oldPrice === ""
+            ? null
+            : Number(oldPrice),
+
+        stock: Number(stock),
+
+        discount: 0,
+
+        rating: 0,
+
+        reviews: 0,
+
+        featured,
+
+        featured_order: 0,
+
+        flash,
+
+        flash_order: 0,
+
+        best_seller: bestSeller,
+
+        is_new: isNew,
+
+        active,
+
+        free_shipping: false,
+
+        sold: 0,
+
+        views: 0,
+      };
+
+      if (isEditing) {
+        await updateProduct(product!.id, data);
+
+        alert(
+          "Producto actualizado correctamente."
+        );
+      } else {
+        await createProduct(data);
+
+        alert(
+          "Producto creado correctamente."
+        );
+
+        setName("");
+        setSlug("");
+        setDescription("");
+
+        setBrand("");
+        setCategory("");
+
+        setPrice("");
+        setOldPrice("");
+        setStock("");
+
+        setImage("");
+
+        setFeatured(false);
+        setFlash(false);
+        setBestSeller(false);
+        setIsNew(false);
+        setActive(true);
+      }
+
+      onSuccess?.();
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "No fue posible guardar el producto."
+      );
+
+    } finally {
+
+      setLoading(false);
+
+    }
+  }
+    return (
     <form
       onSubmit={handleSubmit}
       className="space-y-8"
     >
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid gap-6 md:grid-cols-2">
 
         <div>
-          <label className="block mb-2 text-gray-300">
+          <label className="mb-2 block text-gray-300">
             Nombre
           </label>
 
@@ -87,7 +209,7 @@ export default function ProductForm() {
         </div>
 
         <div>
-          <label className="block mb-2 text-gray-300">
+          <label className="mb-2 block text-gray-300">
             Slug
           </label>
 
@@ -99,7 +221,7 @@ export default function ProductForm() {
         </div>
 
         <div className="md:col-span-2">
-          <label className="block mb-2 text-gray-300">
+          <label className="mb-2 block text-gray-300">
             Descripción
           </label>
 
@@ -112,53 +234,31 @@ export default function ProductForm() {
         </div>
 
         <div>
-          <label className="block mb-2 text-gray-300">
+          <label className="mb-2 block text-gray-300">
             Marca
           </label>
 
-          <select
+          <input
             value={brand}
             onChange={(e) => setBrand(e.target.value)}
             className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
-          >
-            <option value="">Seleccione una marca</option>
-
-            {brands.map((brand) => (
-              <option
-                key={brand}
-                value={brand}
-              >
-                {brand}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
         <div>
-          <label className="block mb-2 text-gray-300">
+          <label className="mb-2 block text-gray-300">
             Categoría
           </label>
 
-          <select
+          <input
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
-          >
-            <option value="">Seleccione una categoría</option>
-
-            {categories.map((category) => (
-              <option
-                key={category}
-                value={category}
-              >
-                {category}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
         <div>
-          <label className="block mb-2 text-gray-300">
+          <label className="mb-2 block text-gray-300">
             Precio
           </label>
 
@@ -171,7 +271,7 @@ export default function ProductForm() {
         </div>
 
         <div>
-          <label className="block mb-2 text-gray-300">
+          <label className="mb-2 block text-gray-300">
             Precio anterior
           </label>
 
@@ -184,7 +284,7 @@ export default function ProductForm() {
         </div>
 
         <div>
-          <label className="block mb-2 text-gray-300">
+          <label className="mb-2 block text-gray-300">
             Stock
           </label>
 
@@ -196,32 +296,24 @@ export default function ProductForm() {
           />
         </div>
 
-        <div>
-          <label className="block mb-2 text-gray-300">
-            Imagen
-          </label>
-
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              if (e.target.files?.length) {
-                setImage(e.target.files[0]);
-              }
-            }}
-            className="block w-full text-gray-300 file:mr-4 file:rounded-lg file:border-0 file:bg-yellow-400 file:px-4 file:py-2 file:font-bold file:text-black hover:file:bg-yellow-300"
+        <div className="md:col-span-2">
+          <ImageUploader
+            value={image}
+            onChange={setImage}
           />
         </div>
 
       </div>
 
-      <div className="grid md:grid-cols-5 gap-4">
+      <div className="grid gap-4 md:grid-cols-5">
 
         <label className="flex items-center gap-2 text-white">
           <input
             type="checkbox"
             checked={featured}
-            onChange={(e) => setFeatured(e.target.checked)}
+            onChange={(e) =>
+              setFeatured(e.target.checked)
+            }
           />
           Destacado
         </label>
@@ -230,7 +322,9 @@ export default function ProductForm() {
           <input
             type="checkbox"
             checked={flash}
-            onChange={(e) => setFlash(e.target.checked)}
+            onChange={(e) =>
+              setFlash(e.target.checked)
+            }
           />
           Flash
         </label>
@@ -239,7 +333,9 @@ export default function ProductForm() {
           <input
             type="checkbox"
             checked={bestSeller}
-            onChange={(e) => setBestSeller(e.target.checked)}
+            onChange={(e) =>
+              setBestSeller(e.target.checked)
+            }
           />
           Best Seller
         </label>
@@ -248,7 +344,9 @@ export default function ProductForm() {
           <input
             type="checkbox"
             checked={isNew}
-            onChange={(e) => setIsNew(e.target.checked)}
+            onChange={(e) =>
+              setIsNew(e.target.checked)
+            }
           />
           Nuevo
         </label>
@@ -257,19 +355,31 @@ export default function ProductForm() {
           <input
             type="checkbox"
             checked={active}
-            onChange={(e) => setActive(e.target.checked)}
+            onChange={(e) =>
+              setActive(e.target.checked)
+            }
           />
           Activo
         </label>
 
       </div>
 
-      <button
-        type="submit"
-        className="rounded-xl bg-yellow-400 px-8 py-3 font-bold text-black transition hover:bg-yellow-300"
-      >
-        Guardar producto
-      </button>
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          disabled={loading}
+          className="rounded-xl bg-yellow-400 px-8 py-3 font-bold text-black transition hover:bg-yellow-300 disabled:opacity-50"
+        >
+          {loading
+            ? isEditing
+              ? "Actualizando..."
+              : "Guardando..."
+            : isEditing
+              ? "Actualizar producto"
+              : "Guardar producto"}
+        </button>
+      </div>
+
     </form>
   );
 }
